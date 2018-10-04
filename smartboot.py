@@ -36,10 +36,18 @@ class EventProcessor:
         self._measured = False
         self.done = False
         self._events = []
+        self._events1 = []
+        self._events2 = []
+        self._events3 = []
+        self._events4 = []
 
     def mass(self, event):
         if event.totalWeight > 30:
             self._events.append(event.totalWeight)
+            self._eventsTL.append(event.topLeft)
+            self._eventsTR.append(event.topRight)
+            self._eventsBL.append(event.bottomLeft)
+            self._eventsBR.append(event.bottomRight)
             if not self._measured:
                 print "Starting measurement."
                 self._measured = True
@@ -52,6 +60,35 @@ class EventProcessor:
             return 0
         histogram = collections.Counter(round(num, 1) for num in self._events)
         return histogram.most_common(1)[0][0]
+    
+    @property
+    def weightTL(self):
+        if not self._eventsTL:
+            return 0
+        histogram = collections.Counter(round(num, 1) for num in self._eventsTL)
+        return histogram.most_common(1)[0][0]
+    
+    @property
+    def weightTR(self):
+        if not self._eventsTR:
+            return 0
+        histogram = collections.Counter(round(num, 1) for num in self._eventsTR)
+        return histogram.most_common(1)[0][0]
+    
+    @property
+    def weightBL(self):
+        if not self._eventsBL:
+            return 0
+        histogram = collections.Counter(round(num, 1) for num in self._eventsBL)
+        return histogram.most_common(1)[0][0]    
+    
+    @property
+    def weightBR(self):
+        if not self._eventsBR:
+            return 0
+        histogram = collections.Counter(round(num, 1) for num in self._eventsBR)
+        return histogram.most_common(1)[0][0]
+    
 
 
 class BoardEvent:
@@ -297,9 +334,13 @@ def main():
     board.receive()
 
     print processor.weight
+    print processor.weightTL
+    print processor.weightTR
+    print processor.weightBL
+    print processor.weightBR
 
-    # Disconnect the balance board after exiting.
-    subprocess.check_output(["bluez-test-device", "disconnect", address])
+#     # Disconnect the balance board after exiting.
+#     subprocess.check_output(["bluez-test-device", "disconnect", address])
 
 if __name__ == "__main__":
     main()
